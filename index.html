@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineOTTBeat | Curated Movies & OTT Discoveries</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0f17;
+      color: #f1f5f9;
+    }
+    .poster-card:hover .poster-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 bg-[#0b0f17]/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-rose-950/50">
+          C
+        </div>
+        <div>
+          <span class="font-extrabold text-xl tracking-tight text-white">Cine<span class="text-rose-500">OTT</span>Beat</span>
+          <span class="hidden sm:inline-block text-xs text-slate-400 ml-2 px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">Curated</span>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="relative flex-1 max-w-md">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+        <input 
+          id="searchInput" 
+          type="text" 
+          placeholder="Search psychological thrillers, mysteries, Malayalam cinema..." 
+          class="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-700/80 rounded-full text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-rose-500 transition-colors"
+        >
+      </div>
+
+      <!-- Watchlist CTA -->
+      <button onclick="toggleWatchlistView()" class="relative flex items-center gap-2 px-3.5 py-2 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition">
+        <i class="fa-solid fa-bookmark text-rose-400"></i>
+        <span class="hidden md:inline">Watchlist</span>
+        <span id="watchlistCount" class="px-1.5 py-0.2 rounded-full bg-rose-600 text-[10px] text-white font-bold">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO SPOTLIGHT -->
+  <section id="heroSection" class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="relative rounded-3xl overflow-hidden border border-slate-800 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
+      <div class="space-y-4 max-w-xl z-10">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30">Spotlight Feature</span>
+          <span class="text-xs text-slate-400">★ 8.2 IMDb</span>
+          <span class="text-xs text-slate-400">• Psychological Mystery</span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+          The Invisible Guest <span class="text-slate-400 text-2xl font-normal">(Contratiempo)</span>
+        </h1>
+        <p class="text-sm md:text-base text-slate-300 leading-relaxed">
+          A high-profile entrepreneur accused of murder works with a veteran witness-preparation expert to construct an airtight defense in just a few tense hours.
+        </p>
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <button onclick="openModal(1)" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-sm shadow-lg shadow-rose-900/30 flex items-center gap-2 transition">
+            <i class="fa-solid fa-circle-info"></i> View Story & Clues
+          </button>
+          <span class="px-3 py-1.5 rounded-lg bg-slate-800/90 border border-slate-700 text-xs font-medium text-slate-300">
+            Stream on: <strong class="text-white">Netflix</strong>
+          </span>
+        </div>
+      </div>
+      <div class="w-full md:w-80 h-72 rounded-2xl overflow-hidden border border-slate-700/60 shadow-2xl relative flex-shrink-0 group">
+        <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80" alt="Spotlight" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+        <div class="absolute bottom-3 left-3 text-xs font-semibold px-2 py-1 rounded bg-black/70 backdrop-blur text-white">
+          Spanish Mystery Thriller
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORY FILTER CHIPS -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar" id="categoryChips">
+      <button onclick="filterCategory('All')" class="category-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white border border-rose-500">All Picks</button>
+      <button onclick="filterCategory('Psychological Thriller')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Psychological Thrillers</button>
+      <button onclick="filterCategory('Malayalam')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Malayalam Essentials</button>
+      <button onclick="filterCategory('Mind-Bending')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Mind-Bending & Twists</button>
+      <button onclick="filterCategory('Crime & Investigation')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Crime & Whodunits</button>
+    </div>
+  </section>
+
+  <!-- MAIN MOVIES GRID -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex items-center justify-between mb-6">
+      <h2 id="gridTitle" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Curated Recommendations
+      </h2>
+      <span id="resultCount" class="text-xs text-slate-400">Showing all titles</span>
+    </div>
+
+    <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+      <!-- Injected by JavaScript -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-16 space-y-3">
+      <i class="fa-solid fa-film text-4xl text-slate-600"></i>
+      <h3 class="text-base font-semibold text-slate-300">No titles match your search</h3>
+      <p class="text-xs text-slate-500">Try searching for genres like Thriller, Mystery, or Malayalam.</p>
+    </div>
+  </main>
+
+  <!-- MOVIE DETAIL MODAL -->
+  <div id="movieModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-xl w-full p-6 md:p-8 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
+        ✕
+      </button>
+
+      <div id="modalContent">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 bg-[#070a10] py-6 text-center text-xs text-slate-500">
+    <p>© 2026 CineOTTBeat. Hand-picked cinema & streaming analysis.</p>
+  </footer>
+
+  <script>
+    const movies = [
+      {
+        id: 1,
+        title: "The Invisible Guest",
+        year: 2016,
+        category: "Psychological Thriller",
+        rating: 8.1,
+        platform: "Netflix",
+        poster: "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=600&q=80",
+        summary: "A successful entrepreneur finds himself locked in a hotel room with his dead lover and no way in or out. He hires a legendary specialist to crack the truth.",
+        tags: ["Twist Ending", "Spanish", "Courtroom"]
+      },
+      {
+        id: 2,
+        title: "Coherence",
+        year: 2013,
+        category: "Mind-Bending",
+        rating: 7.2,
+        platform: "Prime Video",
+        poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80",
+        summary: "During a dinner party when a comet passes overhead, eight friends begin experiencing strange occurrences as quantum decoherence fractures reality into alternate parallel houses.",
+        tags: ["Sci-Fi", "Dinner Party", "Parallel Realities"]
+      },
+      {
+        id: 3,
+        title: "The Body",
+        year: 2012,
+        category: "Psychological Thriller",
+        rating: 7.6,
+        platform: "Netflix",
+        poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80",
+        summary: "A police inspector investigates the mysterious disappearance of a woman's body from a morgue, leading to a cat-and-mouse psychological game with her husband.",
+        tags: ["Morgue Mystery", "Whodunit", "Suspense"]
+      },
+      {
+        id: 4,
+        title: "Anandam",
+        year: 2016,
+        category: "Malayalam",
+        rating: 7.3,
+        platform: "Disney+ Hotstar",
+        poster: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+        summary: "Seven engineering students embark on a college trip across Goa and Hampi, forming bonds, navigating romances, and finding self-discovery.",
+        tags: ["Coming-of-Age", "Travel", "Feel-Good"]
+      },
+      {
+        id: 5,
+        title: "Gone Girl",
+        year: 2014,
+        category: "Psychological Thriller",
+        rating: 8.1,
+        platform: "Prime Video",
+        poster: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80",
+        summary: "With his wife's disappearance having become the focus of an intense media circus, a man sees the spotlight turn on him when it's suspected that he may not be innocent.",
+        tags: ["David Fincher", "Media Circus", "Unreliable Narrator"]
+      },
+      {
+        id: 6,
+        title: "Parasite",
+        year: 2019,
+        category: "Mind-Bending",
+        rating: 8.5,
+        platform: "SonyLIV",
+        poster: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=600&q=80",
+        summary: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
+        tags: ["Class Warfare", "Masterpiece", "Dark Comedy"]
+      },
+      {
+        id: 7,
+        title: "The Game",
+        year: 1997,
+        category: "Psychological Thriller",
+        rating: 7.7,
+        platform: "Apple TV",
+        poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
+        summary: "A wealthy San Francisco investment banker receives an unusual birthday gift from his brother: a live-action game that consumes every aspect of his reality.",
+        tags: ["Paranoia", "Fincher", "High Stakes"]
+      },
+      {
+        id: 8,
+        title: "Memories",
+        year: 2013,
+        category: "Malayalam",
+        rating: 8.0,
+        platform: "Disney+ Hotstar",
+        poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=600&q=80",
+        summary: "An alcoholic cop is asked to investigate a series of mysterious serial killings, testing his investigative instincts while wrestling his inner demons.",
+        tags: ["Jeethu Joseph", "Serial Killer", "Investigation"]
+      }
+    ];
+
+    let currentCategory = 'All';
+    let watchlist = JSON.parse(localStorage.getItem('cine_watchlist') || '[]');
+
+    function renderMovies(items) {
+      const grid = document.getElementById('moviesGrid');
+      const empty = document.getElementById('emptyState');
+      grid.innerHTML = '';
+
+      if (items.length === 0) {
+        empty.classList.remove('hidden');
+        document.getElementById('resultCount').textContent = '0 titles';
+        return;
+      }
+      empty.classList.add('hidden');
+      document.getElementById('resultCount').textContent = `${items.length} titles`;
+
+      items.forEach(m => {
+        const isSaved = watchlist.includes(m.id);
+        const card = document.createElement('div');
+        card.className = "poster-card group relative bg-slate-900/90 rounded-2xl overflow-hidden border border-slate-800 hover:border-rose-500/50 transition-all duration-300 flex flex-col cursor-pointer";
+        card.onclick = () => openModal(m.id);
+        card.innerHTML = `
+          <div class="relative aspect-[2/3] w-full overflow-hidden bg-slate-950">
+            <img src="${m.poster}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            <div class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-[11px] font-bold text-amber-400 flex items-center gap-1">
+              <i class="fa-solid fa-star text-[10px]"></i> ${m.rating}
+            </div>
+            <button onclick="event.stopPropagation(); toggleWatchlist(${m.id})" class="absolute top-2 right-2 w-7 h-7 rounded-full ${isSaved ? 'bg-rose-600 text-white' : 'bg-black/60 text-slate-300 hover:text-white'} backdrop-blur-md flex items-center justify-center text-xs transition">
+              <i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark"></i>
+            </button>
+            <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-slate-900/90 text-[10px] font-medium text-slate-300 border border-slate-700/60">${m.platform}</span>
+              <span class="text-[10px] text-slate-400">${m.year}</span>
+            </div>
+          </div>
+          <div class="p-3 flex-1 flex flex-col justify-between">
+            <div>
+              <p class="text-[11px] text-rose-400 font-medium uppercase tracking-wider mb-0.5">${m.category}</p>
+              <h3 class="font-bold text-sm text-slate-100 group-hover:text-rose-400 transition-colors line-clamp-1">${m.title}</h3>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      updateWatchlistBadge();
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        if (btn.textContent.includes(cat) || (cat === 'All' && btn.textContent.includes('All'))) {
+          btn.className = "category-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white border border-rose-500";
+        } else {
+          btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800";
+        }
+      });
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      let filtered = movies;
+
+      if (currentCategory !== 'All') {
+        filtered = filtered.filter(m => m.category === currentCategory);
+      }
+
+      if (q) {
+        filtered = filtered.filter(m => 
+          m.title.toLowerCase().includes(q) || 
+          m.summary.toLowerCase().includes(q) ||
+          m.category.toLowerCase().includes(q) ||
+          m.tags.some(t => t.toLowerCase().includes(q))
+        );
+      }
+
+      renderMovies(filtered);
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+    function toggleWatchlist(id) {
+      if (watchlist.includes(id)) {
+        watchlist = watchlist.filter(item => item !== id);
+      } else {
+        watchlist.push(id);
+      }
+      localStorage.setItem('cine_watchlist', JSON.stringify(watchlist));
+      applyFilters();
+    }
+
+    function updateWatchlistBadge() {
+      document.getElementById('watchlistCount').textContent = watchlist.length;
+    }
+
+    function toggleWatchlistView() {
+      const savedMovies = movies.filter(m => watchlist.includes(m.id));
+      document.getElementById('gridTitle').innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-500"></span> Saved In Your Watchlist';
+      renderMovies(savedMovies);
+    }
+
+    function openModal(id) {
+      const m = movies.find(item => item.id === id);
+      if (!m) return;
+      const isSaved = watchlist.includes(m.id);
+
+      const modalContent = document.getElementById('modalContent');
+      modalContent.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/30">${m.category}</span>
+            <span class="text-xs text-slate-400">${m.year}</span>
+            <span class="text-xs text-amber-400 font-bold">★ ${m.rating} IMDb</span>
+          </div>
+          <h2 class="text-2xl font-black text-white">${m.title}</h2>
+          <p class="text-sm text-slate-300 leading-relaxed">${m.summary}</p>
+          
+          <div class="flex flex-wrap gap-2 pt-1">
+            ${m.tags.map(t => `<span class="px-2 py-0.5 rounded bg-slate-800 text-[11px] text-slate-400">#${t}</span>`).join('')}
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <div>
+              <p class="text-xs text-slate-400">Where to Watch</p>
+              <p class="text-sm font-bold text-white">${m.platform}</p>
+            </div>
+            <button onclick="toggleWatchlist(${m.id}); openModal(${m.id});" class="px-4 py-2 rounded-xl text-xs font-semibold ${isSaved ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-200 hover:bg-slate-700'} border border-slate-700 transition">
+              <i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark mr-1"></i> ${isSaved ? 'In Watchlist' : 'Add to Watchlist'}
+            </button>
+          </div>
+        </div>
+      `;
+      const modal = document.getElementById('movieModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('movieModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Close on backdrop click
+    document.getElementById('movieModal').addEventListener('click', (e) => {
+      if (e.target.id === 'movieModal') closeModal();
+    });
+
+    // Initial render
+    renderMovies(movies);
+  </script>
+</body>
+</html>
