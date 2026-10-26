@@ -7,47 +7,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CineOTTBeat | Curated Movies & OTT Discoveries</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-  const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTBiN2EyY2JmZjdiOTJhYmJkYzczN2UyMWIzZTliOSIsIm5iZiI6MTc5MzA1MzQ5MC4wMTMsInN1YiI6IjZhZGZkMzMyMjY3M2FhZTQyYzg2NzVhNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.t-o4nnbmdmQ5inTyPtCbEzrvI-d1nGXcP5iSIEptlbA';
+ <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTBiN2EyY2JmZjdiOTJhYmJkYzczN2UyMWIzZTliOSIsIm5iZiI6MTc5MzA1MzQ5MC4wMTMsInN1YiI6IjZhZGZkMzMyMjY3M2FhZTQyYzg2NzVhNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.t-o4nnbmdmQ5inTyPtCbEzrvI-d1nGXcP5iSIEptlbA';
 
-  fetch('https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc', {
-    method: 'GET',
-    headers: {
-      'Authorization': 'Bearer ' + TMDB_TOKEN,
-      'Content-Type': 'application/json;charset=utf-8'
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Movies fetched:', data.results);
-    const movies = data.results;
-    const grid = document.getElementById('movieGrid');
-    if (!grid) return;
-    
-    grid.innerHTML = '';
+    fetch('https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + TMDB_TOKEN,
+        'Content-Type': 'application/json;charset=utf-8'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const movies = data.results;
+      const grid = document.getElementById('movieGrid');
+      if (!grid) return;
+      
+      grid.innerHTML = ''; 
 
-    movies.forEach(movie => {
-      const card = document.createElement('div');
-      card.className = 'bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-lg';
-      
-      const posterPath = movie.poster_path 
-        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
-        : 'https://images.unsplash.com/photo-1542204165-65ab26472a7b?w=500&auto=format&fit=crop&q=60';
-      
-      card.innerHTML = `
-        <div class="relative aspect-[2/3] overflow-hidden bg-slate-800">
-          <img src="${posterPath}" alt="${movie.title}" class="object-cover w-full h-full">
-        </div>
-        <div class="p-4">
-          <h3 class="font-bold text-white text-lg truncate">${movie.title}</h3>
-          <p class="text-sm text-slate-400 mt-1">${movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}</p>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-  })
-  .catch(error => console.error('Fetch error:', error));
-</script>
+      movies.forEach(movie => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-lg';
+        
+        const posterPath = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://images.unsplash.com/photo-1542204165-65ab26472a7b?w=500&auto=format&fit=crop&q=60';
+        
+        card.innerHTML = `
+          <div class="relative aspect-[2/3] overflow-hidden bg-slate-800">
+            <img src="${posterPath}" alt="${movie.title}" class="object-cover w-full h-full">
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-white text-lg truncate">${movie.title}</h3>
+            <p class="text-sm text-slate-400 mt-1">${movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}</p>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    })
+    .catch(err => console.error('Fetch error:', err));
+  });
 </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
