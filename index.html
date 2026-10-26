@@ -10,6 +10,23 @@
   <script>
   const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTBiN2EyY2JmZjdiOTJhYmJkYzczN2UyMWIzZTliOSIsIm5iZiI6MTc5MzA1MzQ5MC4wMTMsInN1YiI6IjZhZGZkMzMyMjY3M2FhZTQyYzg2NzVhNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.t-o4nnbmdmQ5inTyPtCbEzrvI-d1nGXcP5iSIEptlbA';
 </script>
+  <script>
+  const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTBiN2EyY2JmZjdiOTJhYmJkYzczN2UyMWIzZTliOSIsIm5iZiI6MTc5MzA1MzQ5MC4wMTMsInN1YiI6IjZhZGZkMzMyMjY3M2FhZTQyYzg2NzVhNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.t-o4nnbmdmQ5inTyPtCbEzrvI-d1nGXcP5iSIEptlbA';
+
+  fetch('https://api.themoviedb.org/3/trending/movie/day?language=en-US', {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + TMDB_TOKEN,
+      'Content-Type': 'application/json;charset=utf-8'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Movies fetched:', data.results);
+    // ഇവിടെ ലഭിക്കുന്ന data.results ഉപയോഗിച്ച് സിനിമകൾ വെബ്സൈറ്റിൽ കാണിക്കാം
+  })
+  .catch(err => console.error('Fetch error:', err));
+</script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
