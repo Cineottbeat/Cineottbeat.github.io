@@ -73,8 +73,7 @@
 
     function fetchMovies() {
       const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTBiN2EyY2JmZjdiOTJhYmJkYzczN2UyMWIzZTliOSIsIm5iZiI6MTc5MzA1MzQ5MC4wMTMsInN1YiI6IjZhZGZkMzMyMjY3M2FhZTQyYzg2NzVhNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.t-o4nnbmdmQ5inTyPtCbEzrvI-d1nGXcP5iSIEptlbA';
-      
-      const languages = 'ml|hi|ta|kn|te|en'; // Malayalam, Hindi, Tamil, Kannada, Telugu, English
+      const languages = 'ml|hi|ta|kn|te|en';
 
       fetch(`https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_original_language=${languages}`, {
         method: 'GET',
