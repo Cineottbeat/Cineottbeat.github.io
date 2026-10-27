@@ -36,10 +36,23 @@
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+  <!-- CATEGORY FILTER CHIPS -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar" id="categoryChips">
+      <button onclick="filterCategory('All')" class="category-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white border border-rose-500">All</button>
+      <button onclick="filterCategory('Malayalam')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Malayalam</button>
+      <button onclick="filterCategory('Tamil')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Tamil</button>
+      <button onclick="filterCategory('Telugu')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Telugu</button>
+      <button onclick="filterCategory('Hindi')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Hindi</button>
+      <button onclick="filterCategory('Kannada')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Kannada</button>
+      <button onclick="filterCategory('English')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">English</button>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
     <div class="flex items-center justify-between mb-6">
       <h2 id="gridTitle" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Live TMDB Discoveries
+        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Curated Multi-Language Collection
       </h2>
       <span id="resultCount" class="text-xs text-slate-400">Loading movies...</span>
     </div>
@@ -47,7 +60,7 @@
     <div id="emptyState" class="hidden text-center py-16 space-y-3">
       <i class="fa-solid fa-film text-4xl text-slate-600"></i>
       <h3 class="text-base font-semibold text-slate-300">No titles match your search</h3>
-      <p class="text-xs text-slate-500">Try searching for other titles or clear the filters.</p>
+      <p class="text-xs text-slate-500">Try searching for other titles or select another language.</p>
     </div>
   </main>
 
@@ -64,45 +77,66 @@
 
   <script>
     let movies = [];
+    let currentCategory = 'All';
     let watchlist = JSON.parse(localStorage.getItem('cine_watchlist') || '[]');
 
+    const LANG_LABELS = {
+      'ml': 'Malayalam',
+      'ta': 'Tamil',
+      'te': 'Telugu',
+      'hi': 'Hindi',
+      'kn': 'Kannada',
+      'en': 'English'
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
-      fetchMovies();
+      fetchMultiLanguageMovies();
       updateWatchlistBadge();
     });
 
-    function fetchMovies() {
+    async function fetchMultiLanguageMovies() {
       const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTBiN2EyY2JmZjdiOTJhYmJkYzczN2UyMWIzZTliOSIsIm5iZiI6MTc5MzA1MzQ5MC4wMTMsInN1YiI6IjZhZGZkMzMyMjY3M2FhZTQyYzg2NzVhNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.t-o4nnbmdmQ5inTyPtCbEzrvI-d1nGXcP5iSIEptlbA';
-      const languages = 'ml|hi|ta|kn|te|en';
+      const targetLangs = ['ml', 'ta', 'te', 'hi', 'kn', 'en'];
 
-      fetch(`https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_original_language=${languages}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + TMDB_TOKEN,
-          'Content-Type': 'application/json;charset=utf-8'
-        }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (!data.results) return;
-        movies = data.results.map(m => {
-          return {
+      try {
+        const fetchPromises = targetLangs.map(lang => 
+          fetch(`https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_original_language=${lang}`, {
+            headers: {
+              'Authorization': 'Bearer ' + TMDB_TOKEN,
+              'Content-Type': 'application/json;charset=utf-8'
+            }
+          })
+          .then(res => res.json())
+          .then(data => data.results || [])
+        );
+
+        const resultsPerLang = await Promise.all(fetchPromises);
+        
+        let aggregated = [];
+        resultsPerLang.forEach((list, index) => {
+          const langCode = targetLangs[index];
+          // Take top 15 popular movies from each language
+          const formatted = list.slice(0, 15).map(m => ({
             id: m.id,
             title: m.title,
             year: m.release_date ? m.release_date.split('-')[0] : 'N/A',
             rating: m.vote_average ? m.vote_average.toFixed(1) : 'NR',
-            platform: "Popular Discoveries",
+            platform: "TMDB Popular",
             poster: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://images.unsplash.com/photo-1542204165-65ab26472a7b?w=500&auto=format&fit=crop&q=60',
             summary: m.overview || 'No synopsis available.',
-            category: m.original_language ? m.original_language.toUpperCase() : 'N/A'
-          };
+            languageCode: langCode,
+            category: LANG_LABELS[langCode] || langCode.toUpperCase()
+          }));
+          aggregated.push(...formatted);
         });
+
+        // Interleave / mix movies so Malayalam, Tamil, etc., appear directly at the top
+        movies = aggregated.sort(() => Math.random() - 0.5);
         applyFilters();
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Fetch error:', err);
         document.getElementById('resultCount').textContent = 'Failed to load movies';
-      });
+      }
     }
 
     function renderMovies(items) {
@@ -110,6 +144,7 @@
       const empty = document.getElementById('emptyState');
       if (!grid) return;
       grid.innerHTML = '';
+
       if (items.length === 0) {
         empty.classList.remove('hidden');
         document.getElementById('resultCount').textContent = '0 titles';
@@ -133,13 +168,12 @@
               <i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark"></i>
             </button>
             <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded bg-slate-900/90 text-[10px] font-medium text-slate-300 border border-slate-700/60">${m.platform}</span>
-              <span class="text-[10px] text-slate-400">${m.year}</span>
+              <span class="px-2 py-0.5 rounded bg-rose-600/80 text-[10px] font-semibold text-white tracking-wide">${m.category}</span>
+              <span class="text-[10px] text-slate-400 font-medium">${m.year}</span>
             </div>
           </div>
           <div class="p-3 flex-1 flex flex-col justify-between">
             <div>
-              <p class="text-[11px] text-rose-400 font-medium uppercase tracking-wider mb-0.5">${m.category}</p>
               <h3 class="font-bold text-sm text-slate-100 group-hover:text-rose-400 transition-colors line-clamp-1">${m.title}</h3>
             </div>
           </div>
@@ -149,11 +183,26 @@
       updateWatchlistBadge();
     }
 
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        if (btn.textContent.trim().toLowerCase() === cat.toLowerCase()) {
+          btn.className = "category-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white border border-rose-500";
+        } else {
+          btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800";
+        }
+      });
+      applyFilters();
+    }
 
     function applyFilters() {
       const q = document.getElementById('searchInput').value.toLowerCase().trim();
       let filtered = movies;
+
+      if (currentCategory !== 'All') {
+        filtered = filtered.filter(m => m.category.toLowerCase() === currentCategory.toLowerCase());
+      }
+
       if (q) {
         filtered = filtered.filter(m => 
           m.title.toLowerCase().includes(q) || 
@@ -162,6 +211,8 @@
       }
       renderMovies(filtered);
     }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
 
     function toggleWatchlist(id) {
       if (watchlist.includes(id)) {
@@ -199,8 +250,8 @@
           <p class="text-sm text-slate-300 leading-relaxed">${m.summary}</p>
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
             <div>
-              <p class="text-xs text-slate-400">Source</p>
-              <p class="text-sm font-bold text-white">${m.platform}</p>
+              <p class="text-xs text-slate-400">Language</p>
+              <p class="text-sm font-bold text-white">${m.category}</p>
             </div>
             <button onclick="toggleWatchlist(${m.id}); openModal(${m.id});" class="px-4 py-2 rounded-xl text-xs font-semibold ${isSaved ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-200 hover:bg-slate-700'} border border-slate-700 transition">
               <i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark mr-1"></i> ${isSaved ? 'In Watchlist' : 'Add to Watchlist'}
@@ -218,6 +269,10 @@
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
+
+    document.getElementById('movieModal').addEventListener('click', (e) => {
+      if (e.target.id === 'movieModal') closeModal();
+    });
   </script>
 </body>
 </html>
