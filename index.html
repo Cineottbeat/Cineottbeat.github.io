@@ -3,14 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Discover the latest, upcoming, and top-rated movies across multiple languages like Malayalam, Tamil, Telugu, Hindi, Kannada, English, Korean, Japanese, Indonesian, and Chinese on CineOTTBeat.">
-  <meta name="keywords" content="movie reviews, upcoming movies, latest film releases, OTT releases, top 100 movies, Anime, Animation, Horror, Thriller">
-  <meta property="og:title" content="CineOTTBeat | Curated Movies & OTT Discoveries">
-  <meta property="og:description" content="Explore and track the best movies, from recent releases to upcoming blockbusters, anime, and all-time classics.">
+  <meta name="description" content="CineOTTBeat - Curated movie reviews, streaming editorial guides, and TMDB discovery across Malayalam, Tamil, Hindi, Korean, and World Cinema.">
+  <meta name="keywords" content="movie reviews, film analysis, OTT releases, Malayalam cinema, South Korean thrillers, CineOTTBeat">
+  <meta name="author" content="CineOTTBeat Editorial Team">
+  <meta property="og:title" content="CineOTTBeat | Curated Movie Reviews & OTT Discoveries">
+  <meta property="og:description" content="Explore original film critiques, streaming guides, and discover top-rated global cinema.">
   <meta property="og:type" content="website">
-  <title>CineOTTBeat | Curated Movies & OTT Discoveries</title>
+  <title>CineOTTBeat | Curated Movie Reviews & OTT Discoveries</title>
+
+  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f17; color: #f1f5f9; }
@@ -19,92 +23,178 @@
     .poster-card:hover .poster-overlay { opacity: 1; transform: translateY(0); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col antialiased">
 
-  <header class="sticky top-0 z-40 bg-[#0b0f17]/90 backdrop-blur-md border-b border-slate-800">
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 bg-[#0b0f17]/95 backdrop-blur-md border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
+      <a href="#" onclick="showSection('home'); return false;" class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-rose-950/50">
           C
         </div>
         <div>
           <span class="font-extrabold text-xl tracking-tight text-white">Cine<span class="text-rose-500">OTT</span>Beat</span>
-          <span class="hidden sm:inline-block text-xs text-slate-400 ml-2 px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">Curated</span>
+          <span class="hidden sm:inline-block text-[11px] text-slate-400 ml-2 px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">Editorial & Discovery</span>
         </div>
-      </div>
+      </a>
 
+      <!-- Search Input -->
       <div class="relative flex-1 max-w-md">
+        <label for="searchInput" class="sr-only">Search Movies</label>
         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
         <input 
           id="searchInput" 
-          type="text" 
-          placeholder="Search movies, overviews..." 
+          type="search" 
+          placeholder="Search films, directors, overviews..." 
           class="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-700/80 rounded-full text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-rose-500 transition-colors"
         >
       </div>
 
-      <button onclick="toggleWatchlistView()" class="relative flex items-center gap-2 px-3.5 py-2 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition">
-        <i class="fa-solid fa-bookmark text-rose-400"></i>
-        <span class="hidden md:inline">Watchlist</span>
-        <span id="watchlistCount" class="px-1.5 py-0.2 rounded-full bg-rose-600 text-[10px] text-white font-bold">0</span>
-      </button>
+      <!-- Watchlist CTA -->
+      <div class="flex items-center gap-3">
+        <button onclick="toggleWatchlistView()" aria-label="View Watchlist" class="flex items-center gap-2 px-3.5 py-2 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition">
+          <i class="fa-solid fa-bookmark text-rose-400"></i>
+          <span class="hidden md:inline">Watchlist</span>
+          <span id="watchlistCount" class="px-1.5 py-0.2 rounded-full bg-rose-600 text-[10px] text-white font-bold">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar" id="categoryChips">
-      <button onclick="filterCategory('All')" class="category-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white border border-rose-500">Recent & Upcoming</button>
-      <button onclick="filterCategory('Malayalam')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Malayalam</button>
-      <button onclick="filterCategory('Tamil')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Tamil</button>
-      <button onclick="filterCategory('Telugu')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Telugu</button>
-      <button onclick="filterCategory('Hindi')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Hindi</button>
-      <button onclick="filterCategory('Kannada')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Kannada</button>
-      <button onclick="filterCategory('English')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">English</button>
-      <button onclick="filterCategory('Spanish')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Spanish</button>
-      <button onclick="filterCategory('Italian')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Italian</button>
-      <button onclick="filterCategory('Korean')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Korean</button>
-      <button onclick="filterCategory('Japanese')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Japanese</button>
-      <button onclick="filterCategory('Indonesian')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Indonesian</button>
-      <button onclick="filterCategory('Chinese')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Chinese</button>
-      <button onclick="filterCategory('Anime')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Top 100 Anime</button>
-      <button onclick="filterCategory('Animation')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Top 100 Animation</button>
-      <button onclick="filterCategory('Top 100')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Top 100 Best Films</button>
-      <button onclick="filterCategory('Crime')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Top 100 Crime</button>
-      <button onclick="filterCategory('Comedy')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Top 100 Comedy</button>
-      <button onclick="filterCategory('Romance')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Top 100 Romance</button>
-      <button onclick="filterCategory('Horror')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Top 100 Horror</button>
-      <button onclick="filterCategory('Thriller')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Top 100 Thriller</button>
+  <!-- VIEW CONTAINER -->
+  <div id="mainViewContainer" class="flex-1 flex flex-col">
+
+    <!-- HOME SECTION -->
+    <div id="homeSection" class="w-full">
+
+      <!-- CATEGORY CHIPS -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar" id="categoryChips">
+          <button data-cat="All" onclick="filterCategory('All')" class="category-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white border border-rose-500 whitespace-nowrap">Recent & Upcoming</button>
+          <button data-cat="Malayalam" onclick="filterCategory('Malayalam')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Malayalam</button>
+          <button data-cat="Tamil" onclick="filterCategory('Tamil')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Tamil</button>
+          <button data-cat="Telugu" onclick="filterCategory('Telugu')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Telugu</button>
+          <button data-cat="Hindi" onclick="filterCategory('Hindi')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Hindi</button>
+          <button data-cat="Kannada" onclick="filterCategory('Kannada')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Kannada</button>
+          <button data-cat="English" onclick="filterCategory('English')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">English</button>
+          <button data-cat="Korean" onclick="filterCategory('Korean')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Korean</button>
+          <button data-cat="Japanese" onclick="filterCategory('Japanese')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Japanese</button>
+          <button data-cat="Top 100" onclick="filterCategory('Top 100')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Top 100 Classics</button>
+          <button data-cat="Crime" onclick="filterCategory('Crime')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Crime & Mystery</button>
+          <button data-cat="Anime" onclick="filterCategory('Anime')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">Anime</button>
+        </div>
+      </section>
+
+      <!-- ORIGINAL EDITORIAL CONTENT (AdSense Policy Compliance) -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 lg:p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+            <h2 class="text-xl font-bold tracking-tight text-white">Editorial Spotlight: Critical Reviews & Insights</h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <article class="p-5 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Analysis</span>
+                <h3 class="text-base font-bold text-slate-100 mt-2 mb-2">The Anatomical Realism of Modern Malayalam Thrillers</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  Unlike conventional whodunits reliant on theatrical reveals, contemporary Malayalam mystery cinema grounds its tension in everyday micro-conflicts and bureaucratic routine. By avoiding hyper-stylized action, films in this genre invoke authentic claustrophobia, grounded tension, and nuanced character morality.
+                </p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>By CineOTTBeat Editorial</span>
+                <span>5 min read</span>
+              </div>
+            </article>
+
+            <article class="p-5 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">OTT Trends</span>
+                <h3 class="text-base font-bold text-slate-100 mt-2 mb-2">Pacing and Morality in Contemporary Korean Noir</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  South Korean narrative cinema continues to redefine global streaming metrics. From gritty revenge sagas to high-stakes psychological dramas, explore how tonal discipline, moral ambiguity, and subversive third-act twists defy standard formulas.
+                </p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>By CineOTTBeat Editorial</span>
+                <span>6 min read</span>
+              </div>
+            </article>
+
+            <article class="p-5 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Curator's Choice</span>
+                <h3 class="text-base font-bold text-slate-100 mt-2 mb-2">World Cinema Discoveries: Beyond the Blockbusters</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  Navigating modern streaming catalogues requires intentional curation. Our team highlights overlooked indie cinema from European, Japanese, and regional independent creators, evaluating structural cinematography, sound design, and narrative cohesion.
+                </p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>By CineOTTBeat Editorial</span>
+                <span>4 min read</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- MOVIES GRID -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        <div class="flex items-center justify-between mb-6">
+          <h2 id="gridTitle" class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span> Live Discoveries
+          </h2>
+          <span id="resultCount" class="text-xs text-slate-400">Loading catalog...</span>
+        </div>
+
+        <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6"></div>
+
+        <div id="emptyState" class="hidden text-center py-16 space-y-3">
+          <i class="fa-solid fa-film text-4xl text-slate-600"></i>
+          <h3 class="text-base font-semibold text-slate-300">No titles match your query</h3>
+          <p class="text-xs text-slate-500">Try adjusting your filters or keyword query.</p>
+        </div>
+      </main>
     </div>
-  </section>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
-    <div class="flex items-center justify-between mb-6">
-      <h2 id="gridTitle" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Live TMDB Discoveries
-      </h2>
-      <span id="resultCount" class="text-xs text-slate-400">Loading movies...</span>
+    <!-- CRAWLABLE STATIC POLICY PAGES -->
+    <div id="policyContainer" class="hidden max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full">
+      <div id="policyContentBox" class="bg-slate-900 border border-slate-800 rounded-3xl p-8 lg:p-12 text-slate-300 text-sm leading-relaxed space-y-6"></div>
+      <div class="mt-6 text-center">
+        <button onclick="showSection('home'); return false;" class="px-5 py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
+          ← Return to CineOTTBeat Catalog
+        </button>
+      </div>
     </div>
 
-    <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6"></div>
+  </div>
 
-    <div id="emptyState" class="hidden text-center py-16 space-y-3">
-      <i class="fa-solid fa-film text-4xl text-slate-600"></i>
-      <h3 class="text-base font-semibold text-slate-300">No titles match your search</h3>
-      <p class="text-xs text-slate-500">Try searching for other titles or clear the filters.</p>
-    </div>
-  </main>
-
-  <div id="movieModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-xl w-full p-6 md:p-8 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
-      <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">✕</button>
+  <!-- MOVIE DETAIL MODAL -->
+  <div id="movieModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div id="movieModalBox" class="bg-slate-900 border border-slate-700 rounded-3xl max-w-xl w-full p-6 md:p-8 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeModal()" aria-label="Close details" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">✕</button>
       <div id="modalContent"></div>
     </div>
   </div>
 
-  <footer class="border-t border-slate-800 bg-[#070a10] py-6 text-center text-xs text-slate-500">
-    <p>© 2026 CineOTTBeat. Powered by TMDB API.</p>
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 bg-[#070a10] py-10 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4">
+      <nav class="flex justify-center flex-wrap gap-6 font-medium text-slate-400" aria-label="Legal & Contact Navigation">
+        <a href="#about" onclick="showSection('about'); return false;" class="hover:text-rose-400 transition">About Us</a>
+        <a href="#contact" onclick="showSection('contact'); return false;" class="hover:text-rose-400 transition">Contact Us</a>
+        <a href="#privacy" onclick="showSection('privacy'); return false;" class="hover:text-rose-400 transition">Privacy Policy</a>
+        <a href="#terms" onclick="showSection('terms'); return false;" class="hover:text-rose-400 transition">Terms of Service</a>
+      </nav>
+      <p class="text-[11px] max-w-xl text-slate-500">
+        CineOTTBeat is an independent film analysis and discovery resource. Film posters, logos, and metadata are retrieved via TMDB API under fair-use editorial commentary and discovery standards.
+      </p>
+      <p>© 2026 CineOTTBeat. All rights reserved.</p>
+    </div>
   </footer>
 
+  <!-- JAVASCRIPT ENGINE -->
   <script>
     let movies = [];
     let currentCategory = 'All';
@@ -113,151 +203,183 @@
     const LANG_LABELS = {
       'ml': 'Malayalam', 'ta': 'Tamil', 'te': 'Telugu', 
       'hi': 'Hindi', 'kn': 'Kannada', 'en': 'English',
-      'es': 'Spanish', 'it': 'Italian', 'ko': 'Korean',
-      'ja': 'Japanese', 'id': 'Indonesian', 'zh': 'Chinese'
-    };
-
-    const GENRE_IDS = {
-      'Crime': 80, 'Comedy': 35, 'Romance': 10749, 
-      'Animation': 16, 'Horror': 27, 'Thriller': 53
+      'ko': 'Korean', 'ja': 'Japanese'
     };
 
     const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTBiN2EyY2JmZjdiOTJhYmJkYzczN2UyMWIzZTliOSIsIm5iZiI6MTc5MzA1MzQ5MC4wMTMsInN1YiI6IjZhZGZkMzMyMjY3M2FhZTQyYzg2NzVhNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.t-o4nnbmdmQ5inTyPtCbEzrvI-d1nGXcP5iSIEptlbA';
 
+    const LEGAL_DOCS = {
+      about: `
+        <h1 class="text-2xl font-bold text-white mb-2">About CineOTTBeat</h1>
+        <p class="text-xs text-rose-400 font-semibold mb-4">Independent Film Review & Curated OTT Journal</p>
+        <p>CineOTTBeat was founded to solve streaming fragmentation. With modern entertainment dispersed across regional and global subscription platforms, discerning audiences spend an excessive amount of time looking for quality releases rather than enjoying cinema.</p>
+        <p>Our platform combines programmatic catalog exploration with original editorial writing—spanning Malayalam indie gems, Tamil blockbusters, modern Hindi narratives, South Korean suspense thrillers, and Japanese anime.</p>
+        <h2 class="text-lg font-bold text-white mt-6 mb-2">Our Editorial Principles</h2>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>Original Criticism:</strong> We prioritize character development, screenwriting discipline, and cinematography over algorithmic trends.</li>
+          <li><strong>Respect for Rights Holders:</strong> We do not host, store, or stream pirated video files. We guide users to legitimate theater and streaming releases.</li>
+        </ul>
+      `,
+      contact: `
+        <h1 class="text-2xl font-bold text-white mb-2">Contact Us</h1>
+        <p class="text-xs text-slate-400 mb-6">Editorial inquiries, suggestions, and corrections</p>
+        <p class="mb-4">We actively welcome inquiries from distributors, filmmakers, and film enthusiasts. You can contact our technical and editorial desk directly:</p>
+        <div class="p-6 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+          <p><strong class="text-white">Email:</strong> <a href="mailto:cineottbeat@gmail.com" class="text-rose-400 hover:underline">cineottbeat@gmail.com</a></p>
+          <p><strong class="text-white">Editorial Team:</strong> CineOTTBeat Media</p>
+          <p><strong class="text-white">Operational Base:</strong> County Cork, Ireland</p>
+          <p><strong class="text-white">Review Desk Hours:</strong> Monday – Friday, 09:00 - 18:00 GMT</p>
+        </div>
+      `,
+      privacy: `
+        <h1 class="text-2xl font-bold text-white mb-2">Privacy Policy</h1>
+        <p class="text-xs text-slate-500 mb-6">Last Revised: October 2026</p>
+        <p>This Privacy Policy outlines how CineOTTBeat ("we", "our", or "us") manages visitor data, tracking prevention, and digital advertising compliance.</p>
+        
+        <h2 class="text-lg font-bold text-white mt-4 mb-2">1. Local Storage Only</h2>
+        <p>We do not mandate account registration. Features such as your Watchlist are stored strictly within your browser via HTML5 LocalStorage and are not collected, tracked, or sent to any remote database.</p>
+
+        <h2 class="text-lg font-bold text-white mt-4 mb-2">2. Google AdSense & Cookies</h2>
+        <p>Google, as a third-party vendor, uses cookies to serve advertisements on CineOTTBeat. Google's use of advertising cookies enables it and its partners to serve ads based on your visit to CineOTTBeat and/or other sites on the Internet.</p>
+        <p>You can opt out of personalized advertising by visiting the <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" class="text-rose-400 underline">Google Ads Settings</a> page.</p>
+
+        <h2 class="text-lg font-bold text-white mt-4 mb-2">3. TMDB API Disclosures</h2>
+        <p>Movie titles, plot summaries, ratings, and artwork are retrieved via the TMDB API under fair-use commentary guidelines. We do not distribute or stream proprietary media assets on our infrastructure.</p>
+      `,
+      terms: `
+        <h1 class="text-2xl font-bold text-white mb-2">Terms of Service</h1>
+        <p class="text-xs text-slate-500 mb-6">Effective Date: October 2026</p>
+        <p>By accessing or interacting with CineOTTBeat, you acknowledge and agree to the following terms:</p>
+        <ul class="list-disc pl-5 space-y-2 mt-4">
+          <li>All original written critiques, rankings, and curated articles are protected intellectual property of CineOTTBeat.</li>
+          <li>Movie posters, synopses, and production stills belong to their respective copyright holders.</li>
+          <li>CineOTTBeat does not host, embed, or stream full-length copyrighted video files directly on its servers.</li>
+        </ul>
+      `
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
-      fetchRecentAndUpcoming();
+      const hash = window.location.hash.replace('#', '');
+      if (['about', 'contact', 'privacy', 'terms'].includes(hash)) {
+        showSection(hash);
+      } else {
+        fetchInitialMovies();
+      }
       updateWatchlistBadge();
     });
 
-    async function fetchMoviesFromMultiplePages(url) {
-      let allResults = [];
-      for (let page = 1; page <= 5; page++) {
-        const response = await fetch(`${url}${url.includes('?') ? '&' : '?'}page=${page}`, {
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (['about', 'contact', 'privacy', 'terms'].includes(hash)) {
+        showSection(hash);
+      } else {
+        showSection('home');
+      }
+    });
+
+    function showSection(sectionKey) {
+      const home = document.getElementById('homeSection');
+      const policyContainer = document.getElementById('policyContainer');
+      const policyContentBox = document.getElementById('policyContentBox');
+
+      if (sectionKey === 'home') {
+        history.replaceState(null, null, ' ');
+        policyContainer.classList.add('hidden');
+        home.classList.remove('hidden');
+        if (movies.length === 0) fetchInitialMovies();
+      } else if (LEGAL_DOCS[sectionKey]) {
+        window.location.hash = sectionKey;
+        home.classList.add('hidden');
+        policyContentBox.innerHTML = LEGAL_DOCS[sectionKey];
+        policyContainer.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    async function fetchFromTMDB(endpoint) {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/${endpoint}`, {
           headers: {
-            'Authorization': 'Bearer ' + TMDB_TOKEN,
+            'Authorization': `Bearer ${TMDB_TOKEN}`,
             'Content-Type': 'application/json;charset=utf-8'
           }
         });
-        const data = await response.json();
-        if (data.results) {
-          allResults.push(...data.results);
-        } else {
-          break;
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+        return await res.json();
+      } catch (e) {
+        console.error('TMDB Error:', e);
+        return null;
+      }
+    }
+
+    async function fetchInitialMovies() {
+      document.getElementById('resultCount').textContent = 'Fetching catalog...';
+      const targetLangs = ['ml', 'ta', 'te', 'hi', 'en', 'ko'];
+      
+      const promises = targetLangs.map(lang => 
+        fetchFromTMDB(`discover/movie?include_adult=false&language=en-US&page=1&sort_by=popularity.desc&with_original_language=${lang}`)
+      );
+
+      const results = await Promise.all(promises);
+      let aggregated = [];
+
+      results.forEach((data, i) => {
+        if (data && data.results) {
+          const lang = targetLangs[i];
+          const mapped = data.results.slice(0, 4).map(m => formatMoviePayload(m, LANG_LABELS[lang] || 'Global'));
+          aggregated.push(...mapped);
         }
-      }
-      return allResults;
+      });
+
+      movies = aggregated;
+      applyFilters();
     }
 
-    async function fetchRecentAndUpcoming() {
-      const targetLangs = ['ml', 'ta', 'te', 'hi', 'kn', 'en', 'es', 'it'];
-      const today = new Date();
-      const lastMonth = new Date(today);
-      lastMonth.setMonth(today.getMonth() - 2);
-      const nextMonth = new Date(today);
-      nextMonth.setMonth(today.getMonth() + 2);
-      const dateGte = lastMonth.toISOString().split('T')[0];
-      const dateLte = nextMonth.toISOString().split('T')[0];
-
-      try {
-        const fetchPromises = targetLangs.map(lang => 
-          fetchMoviesFromMultiplePages(`https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&primary_release_date.gte=${dateGte}&primary_release_date.lte=${dateLte}&with_original_language=${lang}`)
-        );
-
-        const resultsPerLang = await Promise.all(fetchPromises);
-        let aggregated = [];
-
-        resultsPerLang.forEach((list, index) => {
-          const langCode = targetLangs[index];
-          const formatted = list.map(m => ({
-            id: m.id, title: m.title,
-            year: m.release_date ? m.release_date.split('-')[0] : 'N/A',
-            rating: m.vote_average ? m.vote_average.toFixed(1) : 'NR',
-            platform: "Popular Discoveries",
-            poster: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://images.unsplash.com/photo-1542204165-65ab26472a7b?w=500&auto=format&fit=crop&q=60',
-            summary: m.overview || 'No synopsis available.',
-            category: LANG_LABELS[langCode] || langCode.toUpperCase()
-          }));
-          aggregated.push(...formatted);
-        });
-
-        movies = aggregated;
-        applyFilters();
-      } catch (err) {
-        console.error('Fetch error:', err);
-        document.getElementById('resultCount').textContent = 'Failed to load movies';
-      }
+    function formatMoviePayload(m, categoryName) {
+      return {
+        id: m.id,
+        title: m.title || 'Untitled',
+        year: m.release_date ? m.release_date.split('-')[0] : 'N/A',
+        rating: m.vote_average ? m.vote_average.toFixed(1) : 'NR',
+        poster: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60',
+        summary: m.overview || 'Editorial review and summary pending curation.',
+        category: categoryName
+      };
     }
 
-    async function fetchTop100() {
-      try {
-        const results = await fetchMoviesFromMultiplePages('https://api.themoviedb.org/3/movie/top_rated?language=en-US');
-        movies = results.map(m => ({
-          id: m.id, title: m.title,
-          year: m.release_date ? m.release_date.split('-')[0] : 'N/A',
-          rating: m.vote_average ? m.vote_average.toFixed(1) : 'NR',
-          platform: "Top Rated",
-          poster: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://images.unsplash.com/photo-1542204165-65ab26472a7b?w=500&auto=format&fit=crop&q=60',
-          summary: m.overview || 'No synopsis available.',
-          category: 'Top 100'
-        }));
-        applyFilters();
-      } catch (err) {
-        console.error('Error fetching top 100:', err);
-      }
-    }
+    async function filterCategory(cat) {
+      currentCategory = cat;
 
-    async function fetchByGenre(genreName, genreId) {
-      try {
-        const results = await fetchMoviesFromMultiplePages(`https://api.themoviedb.org/3/discover/movie?with_genres=${genreId}&language=en-US&sort_by=vote_count.desc`);
-        movies = results.map(m => ({
-          id: m.id, title: m.title,
-          year: m.release_date ? m.release_date.split('-')[0] : 'N/A',
-          rating: m.vote_average ? m.vote_average.toFixed(1) : 'NR',
-          platform: "Top Rated By Genre",
-          poster: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://images.unsplash.com/photo-1542204165-65ab26472a7b?w=500&auto=format&fit=crop&q=60',
-          summary: m.overview || 'No synopsis available.',
-          category: genreName
-        }));
-        applyFilters();
-      } catch (err) {
-        console.error(`Error fetching ${genreName}:`, err);
-      }
-    }
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        const btnCat = btn.getAttribute('data-cat');
+        if (btnCat === cat) {
+          btn.className = "category-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white border border-rose-500 whitespace-nowrap";
+        } else {
+          btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap";
+        }
+      });
 
-    async function fetchAnime() {
-      try {
-        const results = await fetchMoviesFromMultiplePages('https://api.themoviedb.org/3/discover/movie?with_genres=16&with_original_language=ja&language=en-US&sort_by=vote_count.desc');
-        movies = results.map(m => ({
-          id: m.id, title: m.title,
-          year: m.release_date ? m.release_date.split('-')[0] : 'N/A',
-          rating: m.vote_average ? m.vote_average.toFixed(1) : 'NR',
-          platform: "Top Rated Anime",
-          poster: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://images.unsplash.com/photo-1542204165-65ab26472a7b?w=500&auto=format&fit=crop&q=60',
-          summary: m.overview || 'No synopsis available.',
-          category: 'Anime'
-        }));
-        applyFilters();
-      } catch (err) {
-        console.error('Error fetching Anime:', err);
-      }
-    }
+      document.getElementById('resultCount').textContent = `Loading ${cat}...`;
 
-    async function fetchLanguage(langCode, langName) {
-      try {
-        const results = await fetchMoviesFromMultiplePages(`https://api.themoviedb.org/3/discover/movie?with_original_language=${langCode}&language=en-US&sort_by=popularity.desc`);
-        movies = results.map(m => ({
-          id: m.id, title: m.title,
-          year: m.release_date ? m.release_date.split('-')[0] : 'N/A',
-          rating: m.vote_average ? m.vote_average.toFixed(1) : 'NR',
-          platform: `Popular in ${langName}`,
-          poster: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://images.unsplash.com/photo-1542204165-65ab26472a7b?w=500&auto=format&fit=crop&q=60',
-          summary: m.overview || 'No synopsis available.',
-          category: langName
-        }));
-        applyFilters();
-      } catch (err) {
-        console.error(`Error fetching ${langName}:`, err);
+      if (cat === 'Top 100') {
+        const data = await fetchFromTMDB('movie/top_rated?language=en-US&page=1');
+        if (data && data.results) movies = data.results.map(m => formatMoviePayload(m, 'Top Rated'));
+      } else if (cat === 'Crime') {
+        const data = await fetchFromTMDB('discover/movie?with_genres=80&language=en-US&sort_by=vote_count.desc&page=1');
+        if (data && data.results) movies = data.results.map(m => formatMoviePayload(m, 'Crime'));
+      } else if (cat === 'Anime') {
+        const data = await fetchFromTMDB('discover/movie?with_genres=16&with_original_language=ja&language=en-US&sort_by=vote_count.desc&page=1');
+        if (data && data.results) movies = data.results.map(m => formatMoviePayload(m, 'Anime'));
+      } else if (cat === 'All') {
+        await fetchInitialMovies();
+        return;
+      } else {
+        const langCode = Object.keys(LANG_LABELS).find(k => LANG_LABELS[k] === cat) || 'en';
+        const data = await fetchFromTMDB(`discover/movie?with_original_language=${langCode}&language=en-US&sort_by=popularity.desc&page=1`);
+        if (data && data.results) movies = data.results.map(m => formatMoviePayload(m, cat));
       }
+
+      applyFilters();
     }
 
     function renderMovies(items) {
@@ -265,13 +387,15 @@
       const empty = document.getElementById('emptyState');
       if (!grid) return;
       grid.innerHTML = '';
-      if (items.length === 0) {
+
+      if (!items || items.length === 0) {
         empty.classList.remove('hidden');
         document.getElementById('resultCount').textContent = '0 titles';
         return;
       }
+
       empty.classList.add('hidden');
-      document.getElementById('resultCount').textContent = `${items.length} titles`;
+      document.getElementById('resultCount').textContent = `${items.length} titles listed`;
 
       items.forEach(m => {
         const isSaved = watchlist.includes(m.id);
@@ -280,11 +404,11 @@
         card.onclick = () => openModal(m.id);
         card.innerHTML = `
           <div class="relative aspect-[2/3] w-full overflow-hidden bg-slate-950">
-            <img src="${m.poster}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            <img src="${m.poster}" alt="${m.title} poster" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
             <div class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-[11px] font-bold text-amber-400 flex items-center gap-1">
               <i class="fa-solid fa-star text-[10px]"></i> ${m.rating}
             </div>
-            <button onclick="event.stopPropagation(); toggleWatchlist(${m.id})" class="absolute top-2 right-2 w-7 h-7 rounded-full ${isSaved ? 'bg-rose-600 text-white' : 'bg-black/60 text-slate-300 hover:text-white'} backdrop-blur-md flex items-center justify-center text-xs transition">
+            <button onclick="event.stopPropagation(); toggleWatchlist(${m.id})" aria-label="Save to watchlist" class="absolute top-2 right-2 w-7 h-7 rounded-full ${isSaved ? 'bg-rose-600 text-white' : 'bg-black/60 text-slate-300 hover:text-white'} backdrop-blur-md flex items-center justify-center text-xs transition">
               <i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark"></i>
             </button>
             <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between">
@@ -293,7 +417,7 @@
             </div>
           </div>
           <div class="p-3 flex-1 flex flex-col justify-between">
-            <div><h3 class="font-bold text-sm text-slate-100 group-hover:text-rose-400 transition-colors line-clamp-1">${m.title}</h3></div>
+            <h3 class="font-bold text-sm text-slate-100 group-hover:text-rose-400 transition-colors line-clamp-1">${m.title}</h3>
           </div>
         `;
         grid.appendChild(card);
@@ -301,36 +425,9 @@
       updateWatchlistBadge();
     }
 
-    function filterCategory(cat) {
-      currentCategory = cat;
-      document.querySelectorAll('.category-btn').forEach(btn => {
-        if (btn.textContent.trim() === cat || (cat === 'All' && btn.textContent.trim() === 'Recent & Upcoming')) {
-          btn.className = "category-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white border border-rose-500";
-        } else {
-          btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800";
-        }
-      });
-      
-      if (cat === 'Top 100') {
-        fetchTop100();
-      } else if (cat === 'Anime') {
-        fetchAnime();
-      } else if (GENRE_IDS[cat]) {
-        fetchByGenre(cat, GENRE_IDS[cat]);
-      } else if (LANG_LABELS[Object.keys(LANG_LABELS).find(k => LANG_LABELS[k] === cat)]) {
-        const langCode = Object.keys(LANG_LABELS).find(k => LANG_LABELS[k] === cat);
-        fetchLanguage(langCode, cat);
-      } else {
-        fetchRecentAndUpcoming();
-      }
-    }
-
     function applyFilters() {
       const q = document.getElementById('searchInput').value.toLowerCase().trim();
       let filtered = movies;
-      if (currentCategory !== 'All' && currentCategory !== 'Top 100' && currentCategory !== 'Anime' && !GENRE_IDS[currentCategory] && !Object.values(LANG_LABELS).includes(currentCategory)) {
-        filtered = filtered.filter(m => m.category.toLowerCase() === currentCategory.toLowerCase());
-      }
       if (q) {
         filtered = filtered.filter(m => m.title.toLowerCase().includes(q) || m.summary.toLowerCase().includes(q));
       }
@@ -354,6 +451,7 @@
     }
 
     function toggleWatchlistView() {
+      showSection('home');
       const savedMovies = movies.filter(m => watchlist.includes(m.id));
       document.getElementById('gridTitle').innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-500"></span> Saved In Your Watchlist';
       renderMovies(savedMovies);
@@ -374,7 +472,7 @@
           <h2 class="text-2xl font-black text-white">${m.title}</h2>
           <p class="text-sm text-slate-300 leading-relaxed">${m.summary}</p>
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
-            <div><p class="text-xs text-slate-400">Language</p><p class="text-sm font-bold text-white">${m.category}</p></div>
+            <div><p class="text-xs text-slate-400">Classification</p><p class="text-sm font-bold text-white">${m.category}</p></div>
             <button onclick="toggleWatchlist(${m.id}); openModal(${m.id});" class="px-4 py-2 rounded-xl text-xs font-semibold ${isSaved ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-200 hover:bg-slate-700'} border border-slate-700 transition">
               <i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark mr-1"></i> ${isSaved ? 'In Watchlist' : 'Add to Watchlist'}
             </button>
@@ -392,6 +490,7 @@
       modal.classList.remove('flex');
     }
 
+    // Modal background click handler with propagation isolation
     document.getElementById('movieModal').addEventListener('click', (e) => {
       if (e.target.id === 'movieModal') closeModal();
     });
